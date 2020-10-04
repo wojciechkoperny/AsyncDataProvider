@@ -1,12 +1,19 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <signal.h>
 
 #ifndef NULL_PTR
    #define NULL_PTR     ((void *)0u)
 #endif
-
 static pthread_t thread_fun1, thread_fun2;
+
+void SigintHandler(int a)
+{
+    printf("BYE World : TERMINATION : %d\n ",a);
+    (void)pthread_cancel(thread_fun1);
+    (void)pthread_cancel(thread_fun2);
+}
 
 void* fun1 (void *arg)
 {
@@ -31,6 +38,8 @@ void* fun2 (void *arg)
 int main()
 {
     printf("Hello World\n");
+
+    (void)signal(SIGINT, SigintHandler);
 
     (void)pthread_create(&thread_fun1, NULL_PTR, &fun1, NULL_PTR);
     (void)pthread_create(&thread_fun2, NULL_PTR, &fun2, NULL_PTR);
