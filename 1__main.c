@@ -35,11 +35,15 @@ void* fun2 (void *arg)
         sleep(2);
     }
 }
-int main()
+int main(int argc, char *argv[])
 {
     printf("Hello World\n");
 
-    (void)signal(SIGINT, SigintHandler);
+    struct sigaction sa;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_handler = SigintHandler;
+
+    (void)sigaction(SIGINT, &sa, NULL);
 
     (void)pthread_create(&thread_fun1, NULL_PTR, &fun1, NULL_PTR);
     (void)pthread_create(&thread_fun2, NULL_PTR, &fun2, NULL_PTR);
