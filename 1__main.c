@@ -5,15 +5,16 @@
 #include <signal.h>
 
 #ifndef NULL_PTR
-   #define NULL_PTR     ((void *)0u)
+#define NULL_PTR     ((void *)0u)
 #endif
 #define DEFAULT_TIMER 1U
+#define DBUDOWANIETESTOWE
 static pthread_t thread_fun1, thread_fun2;
 int Timer = DEFAULT_TIMER;
 
 void SigintHandler(int a)
 {
-    printf("\nBYE World : TERMINATION : %d\n ",a);
+    printf("\033[0;31m\nBYE World : TERMINATION : %d\n ",a);
     (void)pthread_cancel(thread_fun1);
     (void)pthread_cancel(thread_fun2);
 }
@@ -23,9 +24,9 @@ void* fun1 (void *arg)
     static int ilosc=0;
     while(1)
     {
-        printf ("\e[1;32mThis is cmake test %d\e[0m\n", ilosc);
-        ilosc++;
-        sleep(Timer);
+        printf ("\e[1;32mThis is TASK 1 call number: %d\e[0m\n", ilosc);
+        ilosc++;     
+        sleep(*((int*)arg));
     }
 }
 void* fun2 (void *arg)
@@ -33,11 +34,13 @@ void* fun2 (void *arg)
     static int ilosc=0;
     while(1)
     {
-        printf ("\e[1;33mOther Task %d\e[0m\n", ilosc);
+        printf ("\e[1;33mThis is TASK 2 call number: %d\e[0m\n", ilosc);
         ilosc++;
         sleep(2);
     }
 }
+
+
 int main(int argc, char *argv[])
 {
     if (argc >1)
@@ -46,13 +49,17 @@ int main(int argc, char *argv[])
     } 
     printf("Hello World\n");
 
+    #ifdef TEST_BUILD
+        printf("\033[0;31mTEST_BUILD SET!\n");
+    #endif
+
     struct sigaction sa;
     sigemptyset(&sa.sa_mask);
     sa.sa_handler = SigintHandler;
 
     (void)sigaction(SIGINT, &sa, NULL);
 
-    (void)pthread_create(&thread_fun1, NULL_PTR, &fun1, NULL_PTR);
+    (void)pthread_create(&thread_fun1, NULL_PTR, &fun1, &Timer);
     (void)pthread_create(&thread_fun2, NULL_PTR, &fun2, NULL_PTR);
 
     (void)pthread_join(thread_fun1, NULL_PTR);
