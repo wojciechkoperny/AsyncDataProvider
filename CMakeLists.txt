@@ -11,5 +11,5 @@ else()
     message("test_build is NOT set")
 endif()
 
-add_executable(test_proj1 1__main.c)
+add_executable(test_proj1 1__main.cpp)
 target_link_libraries(test_proj1 pthread)
