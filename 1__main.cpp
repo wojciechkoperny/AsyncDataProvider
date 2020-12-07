@@ -59,11 +59,11 @@ int main(int argc, char *argv[])
 
     (void)sigaction(SIGINT, &sa, NULL);
 
-    (void)pthread_create(&thread_fun1, NULL_PTR, &fun1, &Timer);
-    (void)pthread_create(&thread_fun2, NULL_PTR, &fun2, NULL_PTR);
+    (void)pthread_create(&thread_fun1, NULL, &fun1, &Timer);
+    (void)pthread_create(&thread_fun2, NULL, &fun2, NULL);
 
-    (void)pthread_join(thread_fun1, NULL_PTR);
-    (void)pthread_join(thread_fun2, NULL_PTR);
+    (void)pthread_join(thread_fun1, NULL);
+    (void)pthread_join(thread_fun2, NULL);
 
 
     return 0;
