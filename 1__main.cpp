@@ -72,9 +72,10 @@
 
 void SigintHandler(int a)
 {
+    (void)a;
    //printf("\033[0;31m\nBYE World : TERMINATION : %d\n ",a);
-   (void)pthread_cancel(thread_fun1);
-   (void)pthread_cancel(thread_fun2);
+   //(void)pthread_cancel(thread_fun1);
+   //(void)pthread_cancel(thread_fun2);
    std::cout<<"Bye BYE!!\n";
 }
 
@@ -115,7 +116,7 @@ public:
         sigemptyset(&sa.sa_mask);
         sa.sa_handler = SigintHandler;
 
-        (void)sigaction(SIGINT, &sa, NULL);
+        //(void)sigaction(SIGINT, &sa, NULL);
 
         (void)pthread_create(&thread_fun1, NULL, &fun1, NULL);
         (void)pthread_create(&thread_fun2, NULL, &fun2, NULL);
@@ -126,9 +127,9 @@ public:
     }
     ~Task()
     {
+        std::cout<<"Bye World!\n";
         (void)pthread_cancel(thread_fun1);
         (void)pthread_cancel(thread_fun2);
-        std::cout<<"Bye World!\n";
     }
 
 
