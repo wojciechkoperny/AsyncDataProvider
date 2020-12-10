@@ -1,36 +1,43 @@
+	
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
-#include <unistd.h>
-#include <signal.h>
-
-class Task
+#include <cassert>
+#include <cstddef>
+ 
+class IntArray
 {
 private:
-    pthread_t thread_fun1, thread_fun2;
+	int *m_array{};
+	int m_length{};
+ 
 public:
-    Task(/* args */)
-    {
-        std::cout<<"hello from contructor\n";
-    }
-    ~Task()
-    {
-        //(void)pthread_cancel(thread_fun1);
-        //(void)pthread_cancel(thread_fun2);
-        std::cout<<"Bye World!\n";
-    }
-
-
+	IntArray(int length) // constructor
+	{
+		assert(length > 0);
+ 
+		m_array = new int[static_cast<std::size_t>(length)]{};
+		m_length = length;
+	}
+ 
+	~IntArray() // destructor
+	{
+		// Dynamically delete the array we allocated earlier
+		delete[] m_array;
+        std::cout << "delete ";
+	}
+ 
+	void setValue(int index, int value) { m_array[index] = value; }
+	int getValue(int index) { return m_array[index]; }
+ 
+	int getLength() { return m_length; }
 };
-
-
-
+ 
 int main()
 {
-    std::cout<<"Hello World\n";
-
-    Task task;
-
-    return 0;
-}
+	IntArray ar(10); // allocate 10 integers
+	for (int count{ 0 }; count < ar.getLength(); ++count)
+		ar.setValue(count, count+1);
+ 
+	std::cout << "The value of element 5 is: " << ar.getValue(5) << '\n';
+ 
+	return 0;
+} // ar is destroyed here, so the ~IntArray() destructor function is called here
