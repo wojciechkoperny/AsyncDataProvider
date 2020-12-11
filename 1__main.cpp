@@ -4,6 +4,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <signal.h>
+#include <main.hpp>
 
 void* task_run1 (void *arg)
 {
@@ -27,29 +28,21 @@ void* task_run2 (void *arg)
     }
 }
 
-
-class Task
+Task::Task(int a = 2)
 {
-public:
-    static pthread_t thread_fun1, thread_fun2;
-    Task(int a = 2)
-    {
-        std::cout<<"hello from contructor\n";
+    std::cout<<"hello from contructor\n";
+    (void)pthread_create(&thread_fun1, NULL, &task_run1, NULL);
+    (void)pthread_create(&thread_fun2, NULL, &task_run2, &a);
+    (void)pthread_join(thread_fun1, NULL);
+    (void)pthread_join(thread_fun2, NULL);
+}
 
-        (void)pthread_create(&thread_fun1, NULL, &task_run1, NULL);
-        (void)pthread_create(&thread_fun2, NULL, &task_run2, &a);
-
-        (void)pthread_join(thread_fun1, NULL);
-        (void)pthread_join(thread_fun2, NULL);
-
-    }
-    ~Task()
-    {
-        std::cout<<"Hello from destructor!\n";
-        (void)pthread_cancel(thread_fun1);
-        (void)pthread_cancel(thread_fun2);
-    }
-};
+Task::~Task()
+{
+    std::cout<<"Hello from destructor!\n";
+    (void)pthread_cancel(thread_fun1);
+    (void)pthread_cancel(thread_fun2);
+}
 
 pthread_t Task::thread_fun1, Task::thread_fun2;
 
@@ -63,7 +56,11 @@ void SigintHandler(int a)
 
 int main(int argc, char *argv[])
 {
-    int n = 2;
+#ifndef NDEBUG
+    std::cout<<"Debug!\n";
+#endif
+
+    int n{2};
     if (argc >1)
     {
         n = atoi(argv[1]);
@@ -89,6 +86,5 @@ RAII
 w srodku klasy ^ jako member ptread
 w konstruktorze ptcreate
 w destruktorze pt delete
-
 std::thread
 */
