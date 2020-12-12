@@ -4,76 +4,80 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <signal.h>
+#include <vector>
 #include <main.hpp>
 
-void* task_run1 (void *arg)
+struct sigaction sa;
+
+void *printerFunction(void *a)
 {
-    (void)arg;
-    static int ilosc=0;
-    while(1)
-    {
-        std::cout<<"\033[1;31mtask1\033[0m___"<<ilosc<<"\n";
-        ilosc++;     
-        sleep(1);
-    }
+    (void)a;
+    std::cout << "\nprinterFunction1: \n";
 }
-void* task_run2 (void *arg)
+void Task::print()
 {
-    static int ilosc=0;
-    while(1)
-    {
-        std::cout<<"task2___"<<ilosc<<"\n";
-        ilosc++;
-        sleep(*(static_cast<unsigned int*>(arg)));
-    }
+    std::cout << "print z obiektu\n";
 }
 
-Task::Task(int a = 2)
+void Task::print2()
 {
-    std::cout<<"hello from contructor\n";
-    (void)pthread_create(&thread_fun1, NULL, &task_run1, NULL);
-    (void)pthread_create(&thread_fun2, NULL, &task_run2, &a);
-    (void)pthread_join(thread_fun1, NULL);
-    (void)pthread_join(thread_fun2, NULL);
+    std::cout << "ciagle zyje\n";
+}
+
+Task::Task(std::function<void *(void *)> threadTask)
+{
+    int a(5);
+    threadTask;
+    std::cout << "hello from contructor\n";
+    m_threadTask = threadTask;
+    m_threadTask(&a);
+    //(void)pthread_create(&m_threadID, NULL, threadTask.target, NULL);
+    //(void)pthread_create(&thread_fun2, NULL, &task_run2, &a);
+    //(void)pthread_join(thread_fun2, NULL);
 }
 
 Task::~Task()
 {
-    std::cout<<"Hello from destructor!\n";
-    (void)pthread_cancel(thread_fun1);
-    (void)pthread_cancel(thread_fun2);
+    //std::cout << "Hello from destructor!\n";
+    //(void)pthread_cancel(thread_fun1);
+    //(void)pthread_cancel(thread_fun2);
 }
-
-pthread_t Task::thread_fun1, Task::thread_fun2;
 
 void SigintHandler(int a)
 {
-    std::cout<<"\nTERMINATION KEY DETECT: " <<a <<"\n";
-    (void)pthread_cancel(Task::thread_fun1);
-    (void)pthread_cancel(Task::thread_fun2);
-} 
-
+    std::cout << "\nTERMINATION KEY DETECT: " << a << "\n";
+    //(void)pthread_cancel(Task::thread_fun1);
+    //(void)pthread_cancel(Task::thread_fun2);
+}
 
 int main(int argc, char *argv[])
 {
-#ifndef NDEBUG
-    std::cout<<"Debug!\n";
-#endif
 
-    int n{2};
-    if (argc >1)
+    int numberOfTasks{2};
+    if (argc > 1)
     {
-        n = atoi(argv[1]);
+        numberOfTasks = atoi(argv[1]);
     }
-    std::cout<<"Start\n";
-
-    struct sigaction sa;
+    std::cout << "Start\n";
 
     sigemptyset(&sa.sa_mask);
     sa.sa_handler = SigintHandler;
     (void)sigaction(SIGINT, &sa, NULL);
 
-    Task task{n};
+    std::vector<Task> workerTasks;
+
+    for (int i = 0; i < numberOfTasks; i++)
+    {
+        workerTasks.push_back(Task{std::function<void *(void *)>{printerFunction}});
+        workerTasks[i].print();
+    }
+    /*  
+    Task task1{std::function<void()>{printerFunction}};
+    Task task2{std::function<void()>{printerFunction}};
+
+    workerTasks.push_back(task1);
+    workerTasks.push_back(task2);
+ */
 
     return 0;
 }
@@ -87,4 +91,13 @@ w srodku klasy ^ jako member ptread
 w konstruktorze ptcreate
 w destruktorze pt delete
 std::thread
+
+
+2####
+przenies implementacje do task.cpp
+utpwrzyc w biblioteke dodac tam wszystko co potrzebyjemy
+i potem dodac do projektu ta biblioteke.
+    //condition varialbe http://www.cplusplus.com/reference/condition_variable/condition_variable/
+    (void)pthread_join(thread_fun1, NULL); //doczytac co to robi
+
 */

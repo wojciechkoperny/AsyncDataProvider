@@ -1,13 +1,28 @@
 #ifndef MAIN_HPP
 #define MAIN_HPP
- 
+
+#include <functional>
+
 class Task
 {
-public:
-    static pthread_t thread_fun1, thread_fun2;
+private:
+    pthread_t m_threadID;
+    std::function<void *(void *)> m_threadTask;
 
-    Task(int a);
+public:
+    Task(std::function<void *(void *)> threadTask);
     ~Task();
+
+    void *run(void *arg);
+
+    void print();
+
+    void print2();
 };
- 
+
 #endif
+
+/*
+-umiesc klase w innym pliku nazwana tak jak klsa
+-doczytac functional
+*/
