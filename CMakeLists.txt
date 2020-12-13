@@ -10,7 +10,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc)
 if(NOT CMAKE_BUILD_TYPE) 
 set(CMAKE_BUILD_TYPE Debug)
 endif()
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message("Build type: ${CMAKE_BUILD_TYPE}")
 
 option(TESTBUILD "Build test programs" OFF)
     
@@ -25,14 +25,18 @@ add_library(project_settings INTERFACE)
 if (NOT TESTBUILD)
 set_project_warnings(project_settings)
 endif()
-#set_project_warnings(test_proj1)
-#add_library(betterpt lib_betterpt/1.cpp
-#target_include_directories(betterpt PUBLIC ${CMAKE_CURRENT_SOURCE_DIRl}/lib_betterpt/)
+
+#message("project source dir"${PROJECT_SOURCE_DIR})
+#message("current source dir"${CMAKE_CURRENT_SOURCE_DIR})
+
+add_library(vanillaThreads STATIC ${CMAKE_CURRENT_SOURCE_DIR}/VanillaThreads/vThreads.cpp)
+target_include_directories(vanillaThreads PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/VanillaThreads/)
 
 add_executable(test_proj1 1__main.cpp)
 
 target_link_libraries(test_proj1 
     pthread
+    vanillaThreads
     project_settings)
 
 #target_include_directories(test_proj1 ${CMAKE_CURRENT_SOURCE_DIRl}/lib_betterpt/) 
