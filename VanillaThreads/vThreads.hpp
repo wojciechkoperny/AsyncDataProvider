@@ -13,6 +13,8 @@ public:
     Task(std::function<void *(void *)> threadTask, void *arg);
     ~Task();
 
+    void joinTask();
+
     void *run(void *arg);
 
     void print();

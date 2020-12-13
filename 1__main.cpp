@@ -4,20 +4,30 @@
 #include <unistd.h>
 #include <signal.h>
 #include <vector>
+#include <mutex>              // std::mutex, std::unique_lock
+#include <condition_variable> // std::condition_variable
 #include <vThreads.hpp>
 
 struct sigaction sa;
+std::mutex mtx;
+std::condition_variable cv;
+
+volatile bool run = true;
 
 void *printerFunction(void *a)
 {
-    // (void)a;
-    std::cout << "\nprinterFunction: " << *(int *)a << "\n";
+    // while (run)
+    {
+        std::cout << "\nprinterFunction: " << *(int *)a << "\n";
+        sleep(1);
+    }
 }
 //*static_cast<std::function<void*()>*>(context);
 
 void SigintHandler(int a)
 {
     std::cout << "\nTERMINATION KEY DETECT: " << a << "\n";
+    run = false;
     //(void)pthread_cancel(Task::thread_fun1);
     //(void)pthread_cancel(Task::thread_fun2);
 }
@@ -38,13 +48,12 @@ int main(int argc, char *argv[])
 
     std::vector<Task> workerTasks;
 
-    int parametrArgument = 0;
     for (int i = 0; i < numberOfTasks; i++)
     {
-        parametrArgument++;
-        workerTasks.push_back(Task{std::function<void *(void *)>{printerFunction}, (void *)&parametrArgument});
-        //workerTasks[i].print();
+        workerTasks.push_back(Task{std::function<void *(void *)>{printerFunction}, (void *)&i});
+        workerTasks[i].joinTask();
     }
+
     /*  
     Task task1{std::function<void()>{printerFunction}};
     Task task2{std::function<void()>{printerFunction}};

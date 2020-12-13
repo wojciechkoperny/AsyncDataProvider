@@ -23,7 +23,6 @@ Task::Task(std::function<void *(void *)> threadTask, void *arg)
     typedef void *(*function_t)(void *); //http://www.cplusplus.com/forum/general/63552/
     function_t *fun_ptr = m_threadTask.target<function_t>();
     (void)pthread_create(&m_threadID, NULL, *fun_ptr, arg);
-    (void)pthread_join(m_threadID, NULL);
 }
 
 Task::~Task()
@@ -31,4 +30,9 @@ Task::~Task()
     //std::cout << "Hello from destructor!\n";
     //(void)pthread_cancel(thread_fun1);
     //(void)pthread_cancel(thread_fun2);
+}
+
+void Task::joinTask()
+{
+    (void)pthread_join(m_threadID, NULL);
 }
