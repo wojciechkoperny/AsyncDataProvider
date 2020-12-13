@@ -11,8 +11,8 @@ struct sigaction sa;
 
 void *printerFunction(void *a)
 {
-    (void)a;
-    std::cout << "\nprinterFunction1: \n";
+    // (void)a;
+    std::cout << "\nprinterFunction: " << *(int *)a << "\n";
 }
 void Task::print()
 {
@@ -23,17 +23,16 @@ void Task::print2()
 {
     std::cout << "ciagle zyje\n";
 }
-
-Task::Task(std::function<void *(void *)> threadTask)
+//*static_cast<std::function<void*()>*>(context);
+Task::Task(std::function<void *(void *)> threadTask, void *arg)
 {
-    int a(5);
-    threadTask;
     std::cout << "hello from contructor\n";
     m_threadTask = threadTask;
-    m_threadTask(&a);
-    //(void)pthread_create(&m_threadID, NULL, threadTask.target, NULL);
-    //(void)pthread_create(&thread_fun2, NULL, &task_run2, &a);
-    //(void)pthread_join(thread_fun2, NULL);
+
+    typedef void *(*function_t)(void *); //http://www.cplusplus.com/forum/general/63552/
+    function_t *fun_ptr = m_threadTask.target<function_t>();
+    (void)pthread_create(&m_threadID, NULL, *fun_ptr, arg);
+    (void)pthread_join(m_threadID, NULL);
 }
 
 Task::~Task()
@@ -66,10 +65,12 @@ int main(int argc, char *argv[])
 
     std::vector<Task> workerTasks;
 
+    int parametrArgument = 0;
     for (int i = 0; i < numberOfTasks; i++)
     {
-        workerTasks.push_back(Task{std::function<void *(void *)>{printerFunction}});
-        workerTasks[i].print();
+        parametrArgument++;
+        workerTasks.push_back(Task{std::function<void *(void *)>{printerFunction}, (void *)&parametrArgument});
+        //workerTasks[i].print();
     }
     /*  
     Task task1{std::function<void()>{printerFunction}};
