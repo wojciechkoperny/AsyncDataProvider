@@ -1,5 +1,5 @@
-#ifndef MAIN_HPP
-#define MAIN_HPP
+#ifndef VTHREADS_HPP
+#define VTHREADS_HPP
 
 #include <functional>
 
@@ -14,6 +14,8 @@ public:
     ~Task();
 
     void joinTask();
+
+    void detachTask();
 
     void *run(void *arg);
 

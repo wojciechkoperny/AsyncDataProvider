@@ -36,3 +36,8 @@ void Task::joinTask()
 {
     (void)pthread_join(m_threadID, NULL);
 }
+
+void Task::detachTask()
+{
+    (void)pthread_detach(m_threadID);
+}
