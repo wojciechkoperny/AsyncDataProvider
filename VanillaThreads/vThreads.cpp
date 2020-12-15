@@ -10,10 +10,6 @@ void Task::print()
     std::cout << "print z obiektu\n";
 }
 
-void Task::print2()
-{
-    std::cout << "ciagle zyje\n";
-}
 //*static_cast<std::function<void*()>*>(context);
 Task::Task(std::function<void *(void *)> threadTask, void *arg)
 {
@@ -27,8 +23,9 @@ Task::Task(std::function<void *(void *)> threadTask, void *arg)
 
 Task::~Task()
 {
-    //std::cout << "Hello from destructor!\n";
-    //(void)pthread_cancel(thread_fun1);
+    std::cout << "Hello from destructor!\n";
+    //(void)pthread_exit(NULL);
+    //(void)pthread_delete;
     //(void)pthread_cancel(thread_fun2);
 }
 

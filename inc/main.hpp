@@ -6,7 +6,7 @@ typedef struct
 {
     std::function<void *(void *)> Function;
     int FunctionArgs;
-} worker_t;
+} workerDescr_t;
 
 #endif
 

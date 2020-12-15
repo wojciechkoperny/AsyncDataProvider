@@ -17,36 +17,32 @@ volatile bool run = true;
 
 void *printerFunction1(void *a)
 {
-    //int ilosc(10);
     std::unique_lock<std::mutex> lck(mtx1);
     cv.wait(lck);
     while (run)
     {
-        std::cout << "\nprinterFunction1: " << *(int *)a << "\n";
+        //static_cast<(int *)>
+        std::cout << "\nprinterFunction1: " << *static_cast<int *>(a) << "\n";
         sleep(1);
-        // ilosc--;
     }
+    return NULL;
 }
 void *printerFunction2(void *a)
 {
-    //int ilosc(10);
     std::unique_lock<std::mutex> lck(mtx2);
     cv.wait(lck);
     while (run)
     {
-        std::cout << "\nprinterFunction2: " << *(int *)a << "\n";
+        std::cout << "\nprinterFunction2: " << *static_cast<int *>(a) << "\n";
         sleep(1);
-        // ilosc--;
     }
+    return NULL;
 }
-//*static_cast<std::function<void*()>*>(context);
 
 void SigintHandler(int a)
 {
     std::cout << "\nTERMINATION KEY DETECT: " << a << "\n";
     run = false;
-    //(void)pthread_cancel(Task::thread_fun1);
-    //(void)pthread_cancel(Task::thread_fun2);
 }
 
 int main(int argc, char *argv[])
@@ -62,44 +58,37 @@ int main(int argc, char *argv[])
     sa.sa_handler = SigintHandler;
     (void)sigaction(SIGINT, &sa, NULL);
 
-    std::vector<worker_t> workerDescr;
+    std::vector<workerDescr_t> workerDescr;
     std::vector<Task> workerTasks;
-    std::vector<std::function<void *(void *)>> workerFunction;
-    std::vector<int> workerFunctionArguments;
-    workerFunction.push_back(printerFunction1); //jakos ladniej zapisac?
-    workerFunction.push_back(printerFunction2);
+
     for (int i = 0; i < numberOfTasks; i++)
     {
-        worker_t a;
+        workerDescr_t a; //jakos ladniej zapisac?
         workerDescr.push_back(a);
-    }
-    workerDescr[0].Function = printerFunction1;
-    workerDescr[1].Function = printerFunction2;
-    for (int i = 0; i < numberOfTasks; i++)
-    {
-        workerDescr[i].FunctionArgs = i;
-        workerTasks.push_back(Task{workerDescr[i].Function, (void *)&workerDescr[i].FunctionArgs});
-        //workerTasks[i].joinTask();
+        workerDescr[static_cast<long unsigned int>(i)].FunctionArgs = i;
     }
 
-    std::cout << "Jedziem?\n";
+    workerDescr[0].Function = printerFunction1; //jakos ladniej zapisac?
+    workerDescr[1].Function = printerFunction2;
+
+    for (int i = 0; i < numberOfTasks; i++)
+    {
+        workerTasks.push_back(Task{workerDescr[static_cast<long unsigned int>(i)].Function, static_cast<void *>(&workerDescr[static_cast<long unsigned int>(i)].FunctionArgs)});
+    }
+
+    std::cout << "Start?\n";
     std::cin >> runTask;
     if (runTask)
     {
         std::cout << "go!\n";
         cv.notify_all();
     }
-    workerTasks[0].joinTask();
-    workerTasks[1].joinTask();
-    /*  
-    Task task1{std::function<void()>{printerFunction}};
-    Task task2{std::function<void()>{printerFunction}};
 
-    workerTasks.push_back(task1);
-    workerTasks.push_back(task2);
- */
-    //sleep(10);
+    // workerTasks[0].joinTask();
+    // workerTasks[1].joinTask();
 
+    // sleep(3);
+    pthread_exit(NULL);
     return 0;
 }
 

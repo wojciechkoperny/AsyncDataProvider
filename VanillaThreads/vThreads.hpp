@@ -20,8 +20,6 @@ public:
     void *run(void *arg);
 
     void print();
-
-    void print2();
 };
 
 #endif
