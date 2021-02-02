@@ -16,3 +16,15 @@ target_link_libraries(vanillaThreads
         code_coverage
         compiler_warnings
 )
+
+
+add_executable(vanillaThreads_tests
+    tests/DataInterface_test.cpp
+)
+
+target_link_libraries(vanillaThreads_tests
+    vanillaThreads
+    test_runner
+)
+
+add_test(vanillaThreads vanillaThreads_tests)
