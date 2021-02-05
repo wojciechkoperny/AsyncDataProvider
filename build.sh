@@ -1,12 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-export CURRENT_DIR="$PWD"
-export TOOLS_DIR=$CURRENT_DIR/tools
-export CMAKE_ROOT=$TOOLS_DIR/cmake
-export NINJA_ROOT=$TOOLS_DIR/ninja
-export OUT_DIR=$CURRENT_DIR/build
-export PATH=$PATH:$NINJA_ROOT
-OPTION=""
+OUT_DIR=build
+BUILD_TYPE=Release
 
 mkdir -p $OUT_DIR 
 if [ "$1" == "clean" ]; then
@@ -15,14 +10,13 @@ if [ "$1" == "clean" ]; then
     exit
 elif [ "$1" == "debug" ]; then
     echo debug build...
-    OPTION="-DTESTBUILD=ON"
+    BUILD_TYPE=Debug
 
 else
     echo normal build...
-    OPTION="-DTESTBUILD=OFF"
 fi
 
 cd $OUT_DIR
-$CMAKE_ROOT/bin/cmake -G "Ninja" $OPTION ..
-$NINJA_ROOT/ninja -j 4
+cmake -G "Ninja" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+ninja -j $(nproc)
 
