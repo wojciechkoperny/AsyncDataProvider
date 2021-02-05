@@ -7,13 +7,18 @@
 #include <mutex>              // std::mutex, std::unique_lock
 #include <condition_variable> // std::condition_variable
 #include <vThreads.hpp>
+#include <Dispacher.hpp>
 #include <main.hpp>
+#include <atomic>
+#include <future>
 
 struct sigaction sa;
-std::mutex mtx1, mtx2;
+std::mutex mtx1, mtx2, mtx3;
 std::condition_variable cv;
 
-volatile bool run = true;
+std::atomic<bool> run{true};
+//volatile bool run = true;
+
 
 void *printerFunction1(void *a)
 {
@@ -58,6 +63,15 @@ int main(int argc, char *argv[])
     sa.sa_handler = SigintHandler;
     (void)sigaction(SIGINT, &sa, NULL);
 
+    //////////////////////TEST DISPACHER SECTION//////////////////
+
+    Dispacher<int> dispach;
+    std::promise<int> test{dispach.RequestDataById(2)};
+    
+    std::cout << "result=" << (test.get_future()).get() << '\n';
+
+    //////////////////////TEST DISPACHER SECTION//////////////////
+ /*
     std::vector<workerDescr_t> workerDescr;
     std::vector<Task> workerTasks;
 
@@ -67,6 +81,10 @@ int main(int argc, char *argv[])
         workerDescr.push_back(a);
         workerDescr[static_cast<long unsigned int>(i)].FunctionArgs = i;
     }
+
+    mtx3.lock();
+    std::cout << "lock!\n";
+    mtx3.unlock();
 
     workerDescr[0].Function = printerFunction1; //jakos ladniej zapisac?
     workerDescr[1].Function = printerFunction2;
@@ -84,11 +102,11 @@ int main(int argc, char *argv[])
         cv.notify_all();
     }
 
-    // workerTasks[0].joinTask();
-    // workerTasks[1].joinTask();
+    workerTasks[0].joinTask();
+    workerTasks[1].joinTask(); */
 
     // sleep(3);
-    pthread_exit(NULL);
+    //pthread_exit(NULL);
     return 0;
 }
 

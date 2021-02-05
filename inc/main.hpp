@@ -2,11 +2,11 @@
 #define MAIN_HPP
 
 #include <functional>
-typedef struct
+struct workerDescr_t
 {
     std::function<void *(void *)> Function;
     int FunctionArgs;
-} workerDescr_t;
+};
 
 #endif
 
