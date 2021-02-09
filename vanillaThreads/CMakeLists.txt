@@ -1,6 +1,7 @@
 add_library(vanillaThreads
     src/DataInterface.cpp
     src/Dispatcher.cpp
+    src/DataCache.cpp
 )
 
 target_include_directories(vanillaThreads

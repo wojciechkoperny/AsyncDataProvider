@@ -9,6 +9,7 @@ namespace vanilla::threads
 {
     /// Forward declaration of Dispatcher
     class Dispatcher;
+    class DataCache;
 
     class DataInterface
     {
@@ -20,6 +21,7 @@ namespace vanilla::threads
 
     private:
         std::unique_ptr<Dispatcher> mDispatcher;
+        std::unique_ptr<DataCache> mDataCache;
     };
 
 } // namespace vanilla::threads

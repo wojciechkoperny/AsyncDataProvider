@@ -2,6 +2,8 @@
 #define VANILLATHREADS_SRC_DISPATCHER
 
 #include <DataInterface.hpp>
+#include <DataCache.hpp>
+#include <vector>
 
 namespace vanilla::threads
 {
@@ -10,6 +12,7 @@ namespace vanilla::threads
     public:
         Dispatcher();
         virtual ~Dispatcher();
+        std::future<std::vector<uint8_t>> RequestDataById(const uint16_t id);
     };
 
 } // namespace vanilla::threads
