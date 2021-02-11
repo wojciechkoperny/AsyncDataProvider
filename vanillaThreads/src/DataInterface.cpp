@@ -1,10 +1,9 @@
 #include <DataInterface.hpp>
 #include <Dispatcher.hpp>
-#include <DataCache.hpp>
 
 namespace vanilla::threads
 {
-    DataInterface::DataInterface() : mDispatcher(std::make_unique<Dispatcher>()), mDataCache(std::make_unique<DataCache>()) {}
+    DataInterface::DataInterface() : mDispatcher(std::make_unique<Dispatcher>()) {}
 
     DataInterface::~DataInterface() {}
 

@@ -10,12 +10,13 @@ int main()
 	{
 		vanilla::threads::DataInterface dataInterface{};
 
-		auto data = dataInterface.RequestDataById(124);
+		auto data = dataInterface.RequestDataById(1);
 
 		if (data.wait_for(2s) == std::future_status::ready)
 		{
-			std::cout << "Received data for id:123\n";
+			//std::cout << "Received data for id:123\n";
 			auto dataVector = data.get();
+			std::cout << "vector :" << dataVector[0] <<dataVector[1] << "\n";
 		}
 		else
 		{
