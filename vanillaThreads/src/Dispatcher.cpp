@@ -3,6 +3,7 @@
 
 
 #include <iostream>
+#include "TaskPool.hpp"
 
 namespace vanilla::threads
 {
@@ -17,21 +18,6 @@ namespace vanilla::threads
         {
             promise.set_exception(std::make_exception_ptr(std::runtime_error{"Invalid id, must be <= 123"}));
         } 
-        //(void)id;
-        //std::cout << "witam z dispachera KURLA\n";
-
-        //DataCache<T> m_dataCache;
-        // //std::promise<T> m_promised;
-        // if (m_valueCached) 
-        // {
-        //     m_promised.set_value(m_valueCached.value());
-        // }
-        // else
-        // {
-        //     //create new queued task
-        // }
-        //mDataCache->
-
 
         std::optional<std::vector<uint8_t>> m_valueCached (mDataCache->getData(id));
         if (m_valueCached) 
@@ -40,8 +26,8 @@ namespace vanilla::threads
         }
         else
         {
-            //create new taks;
-            //enque task
+            //CREATE NEW TASK AND STORE IT IN TASK POOL
+            //but where to store this task pool instance? in dispacher as unique pointer? 
         }
         
         

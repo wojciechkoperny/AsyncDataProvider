@@ -18,6 +18,7 @@ namespace vanilla::threads
     
     private:
     std::unique_ptr<DataCache> mDataCache;
+    //std::unique_ptr of task pool? or where to store instance of task pool?
     };
 
 } // namespace vanilla::threads

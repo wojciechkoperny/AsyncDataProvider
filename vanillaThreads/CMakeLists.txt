@@ -2,6 +2,8 @@ add_library(vanillaThreads
     src/DataInterface.cpp
     src/Dispatcher.cpp
     src/DataCache.cpp
+    src/Task.cpp
+    src/TaskPool.cpp
 )
 
 target_include_directories(vanillaThreads
@@ -21,6 +23,11 @@ target_link_libraries(vanillaThreads
 
 add_executable(vanillaThreads_tests
     tests/DataInterface_test.cpp
+)
+
+target_include_directories(vanillaThreads_tests
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 target_link_libraries(vanillaThreads_tests
