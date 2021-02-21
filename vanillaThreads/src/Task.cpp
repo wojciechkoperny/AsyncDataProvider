@@ -29,4 +29,14 @@ namespace vanilla::threads
 		return *this;
 	}
 
+    std::promise<std::vector<uint8_t>> Task::getPromise()
+    {
+        return std::move(mPromise);
+    }
+
+    uint16_t Task::getId()
+    {
+        return mId;
+    }
+    
 }

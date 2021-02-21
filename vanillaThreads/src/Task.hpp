@@ -15,11 +15,11 @@ namespace vanilla::threads
         virtual ~Task();
         Task(Task &&t)noexcept;
         Task& operator=(Task&& t) noexcept;
-        //Auto_ptr4(Auto_ptr4&& a) noexcept;
-        //std::optional<std::vector<uint8_t>> getData(uint16_t id);
-        //void putData(uint16_t id, std::vector<uint8_t> &Data);
 
-    private:
+        std::promise<std::vector<uint8_t>> getPromise();
+        uint16_t getId();
+
+    //private:
         std::promise<std::vector<uint8_t>> mPromise;
         uint16_t mId;
     };
