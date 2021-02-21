@@ -29,6 +29,23 @@ int main()
 			std::cerr << "Error gettig data for id:123\n";
 		}
 
+		data = dataInterface.RequestDataById(5);
+		if (data.wait_for(2s) == std::future_status::ready)
+		{
+			std::cout << "wait finish\n";
+		}
+		data = dataInterface.RequestDataById(10);
+		if (data.wait_for(2s) == std::future_status::ready)
+		{
+			std::cout << "wait finish\n";
+		}
+		data = dataInterface.RequestDataById(15);
+		if (data.wait_for(2s) == std::future_status::ready)
+		{
+			std::cout << "wait finish\n";
+		}
+
+
 /* 		sleep(5); 
 		std::cout << "koniec czekania\n"; */
 	}
@@ -36,4 +53,5 @@ int main()
 	{
 		std::cerr << "Error: " << e.what() << std::endl;
 	}
+	std::cout << "\n\n\n\n";
 }

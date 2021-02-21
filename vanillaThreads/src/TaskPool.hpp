@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <map>
+#include <thread>
 #include "Task.hpp"
 
 namespace vanilla::threads
@@ -17,9 +18,13 @@ namespace vanilla::threads
         virtual ~TaskPool();
 
         void enqueTask(Task t);
+        void performThreadSupervisorAction(int i);
 
     private:
         std::vector<Task> mTasksQueue;
+        std::vector<std::thread> mWorkThreads; 
+        std::atomic<bool> mThreadsActive;
+
     };
 
 }
