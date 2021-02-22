@@ -32,17 +32,40 @@ int main()
 		data = dataInterface.RequestDataById(5);
 		if (data.wait_for(2s) == std::future_status::ready)
 		{
-			std::cout << "wait finish\n";
+			auto dataVector = data.get();
+
+			std::cout << "vector: ";
+			for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
+			{
+    			std::cout << *i << ' ';
+			}
+			std::cout<<"\n";
 		}
-		data = dataInterface.RequestDataById(10);
+		
+		data = dataInterface.RequestDataById(9);
 		if (data.wait_for(2s) == std::future_status::ready)
 		{
-			std::cout << "wait finish\n";
+			auto dataVector = data.get();
+
+			std::cout << "vector: ";
+			for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
+			{
+    			std::cout << *i << ' ';
+			}
+			std::cout<<"\n";
 		}
+		
 		data = dataInterface.RequestDataById(15);
 		if (data.wait_for(2s) == std::future_status::ready)
 		{
-			std::cout << "wait finish\n";
+			auto dataVector = data.get();
+
+			std::cout << "vector: ";
+			for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
+			{
+    			std::cout << *i << ' ';
+			}
+			std::cout<<"\n";
 		}
 
 

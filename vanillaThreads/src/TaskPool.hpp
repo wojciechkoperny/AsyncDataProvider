@@ -18,7 +18,7 @@ namespace vanilla::threads
         virtual ~TaskPool();
 
         void enqueTask(Task t);
-        void performThreadSupervisorAction(int i);
+        void performThreadAction(uint8_t i);
 
     private:
         std::vector<Task> mTasksQueue;

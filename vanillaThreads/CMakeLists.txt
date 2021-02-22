@@ -4,6 +4,7 @@ add_library(vanillaThreads
     src/DataCache.cpp
     src/Task.cpp
     src/TaskPool.cpp
+    src/Database.cpp
 )
 
 target_include_directories(vanillaThreads

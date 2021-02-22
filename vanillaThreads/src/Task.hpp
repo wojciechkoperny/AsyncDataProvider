@@ -19,7 +19,7 @@ namespace vanilla::threads
         std::promise<std::vector<uint8_t>> getPromise();
         uint16_t getId();
 
-    //private:
+    private:
         std::promise<std::vector<uint8_t>> mPromise;
         uint16_t mId;
     };
