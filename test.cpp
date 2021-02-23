@@ -68,6 +68,19 @@ int main()
 			std::cout<<"\n";
 		}
 
+		data = dataInterface.RequestDataById(5);
+		if (data.wait_for(2s) == std::future_status::ready)
+		{
+			auto dataVector = data.get();
+
+			std::cout << "vector: ";
+			for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
+			{
+    			std::cout << *i << ' ';
+			}
+			std::cout<<"\n";
+		}
+
 
 /* 		sleep(5); 
 		std::cout << "koniec czekania\n"; */

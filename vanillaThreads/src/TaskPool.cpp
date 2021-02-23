@@ -13,7 +13,7 @@ namespace vanilla::threads
     {
         std::cout << "task pool created!\n";
         mThreadsActive = 1;
-        for (uint8_t i = 0; i < 2; i++)
+        for (uint8_t i = 0; i < 4; i++)
         {
             mWorkThreads.push_back(std::thread(&TaskPool::performThreadAction, this, i));   
             mWorkThreads[i].detach();
@@ -27,15 +27,13 @@ namespace vanilla::threads
 
     void TaskPool::enqueTask(Task t)
     {
-        /* TODO sadas */
-        //todo: POSSIBLY BETTER TO CREATE HERE THREADS WHEN WE ADD NEW TASK 
+        //POSSIBLY BETTER TO CREATE HERE THREADS WHEN WE ADD NEW TASK 
        mTasksQueue.push_back(std::move(t));
     }
 
     void TaskPool::performThreadAction(uint8_t thrdNo)
     {
         Database database;
-        DataCache datacache;
 
         while(mThreadsActive)
         {
@@ -50,10 +48,8 @@ namespace vanilla::threads
 
                 std::cout << "\nthread: "<< static_cast<int>(thrdNo) << "\n";
                 (task.getPromise()).set_value(acquiredData);
-
-                // LOCK AGAIN BEFORE STORE THE VALUE
-                // HOW TO STORE VALUE WHEN DATACACHE OBJECT IS MADE IN DISPACHER?
-                // datacache.putData(id, acquiredData);
+                //IS LOCK RESOURCE NEEDED HERE TO ADD TO CACHE?
+                task.mAddToCache(task.getId(),acquiredData);
             }
         }
         std::cerr << "BYE thread: "<< static_cast<int>(thrdNo) <<"\n";

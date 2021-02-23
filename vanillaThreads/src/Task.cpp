@@ -5,10 +5,11 @@
 
 namespace vanilla::threads
 {
-    Task::Task(std::promise<std::vector<uint8_t>> promise, uint16_t id)
+    Task::Task(std::promise<std::vector<uint8_t>> promise, uint16_t id, std::function<void(uint16_t, std::vector<uint8_t>&)> pf)
     {
         mPromise = std::move(promise);
         mId = id;
+        mAddToCache = pf;
     }
     Task::~Task() {}
 
@@ -16,6 +17,7 @@ namespace vanilla::threads
     {
         mId=t.mId;
         mPromise = std::move(t.mPromise);
+        mAddToCache=t.mAddToCache;
     }
     Task& Task::operator=(Task&& t) noexcept
 	{
@@ -26,6 +28,7 @@ namespace vanilla::threads
         }
         mId = t.mId;
         mPromise = std::move(t.mPromise);
+        mAddToCache = t.mAddToCache;
 		return *this;
 	}
 

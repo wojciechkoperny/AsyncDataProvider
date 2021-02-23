@@ -3,15 +3,15 @@
 
 #include <optional>
 #include <vector>
-
 #include <future>
+#include <functional>
 
 namespace vanilla::threads
 {
     class Task
     {
     public:
-        Task(std::promise<std::vector<uint8_t>> promise, uint16_t id);
+        Task(std::promise<std::vector<uint8_t>> promise, uint16_t id, std::function<void(uint16_t, std::vector<uint8_t>&)> pf);
         virtual ~Task();
         Task(Task &&t)noexcept;
         Task& operator=(Task&& t) noexcept;
@@ -22,6 +22,8 @@ namespace vanilla::threads
     private:
         std::promise<std::vector<uint8_t>> mPromise;
         uint16_t mId;
+    public:
+        std::function<void(uint16_t, std::vector<uint8_t>&)> mAddToCache;
     };
 
 }

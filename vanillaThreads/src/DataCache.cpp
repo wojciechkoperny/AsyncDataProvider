@@ -24,6 +24,7 @@ namespace vanilla::threads
 
     void DataCache::putData(uint16_t id, std::vector<uint8_t> &Data)
     {
+        std::cout << "Add to Cache!\n";
         mMapCached.try_emplace(id, Data);
     }
 

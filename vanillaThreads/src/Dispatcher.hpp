@@ -18,8 +18,8 @@ namespace vanilla::threads
         std::future<std::vector<uint8_t>> RequestDataById(const uint16_t id);
     
     private:
-    std::unique_ptr<DataCache> mDataCache;
-    std::unique_ptr<TaskPool> mTaskPool;
+        std::shared_ptr<DataCache> mDataCache;
+        std::unique_ptr<TaskPool> mTaskPool;
     };
 
 } // namespace vanilla::threads

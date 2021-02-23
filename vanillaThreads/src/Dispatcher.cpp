@@ -1,6 +1,6 @@
 #include "Dispatcher.hpp"
 #include <future>
-
+#include <functional>
 
 #include <iostream>
 #include "TaskPool.hpp"
@@ -8,7 +8,7 @@
 
 namespace vanilla::threads
 {
-    Dispatcher::Dispatcher(): mDataCache(std::make_unique<DataCache>()), mTaskPool(std::make_unique<TaskPool>()) {}
+    Dispatcher::Dispatcher(): mDataCache(std::make_shared<DataCache>()), mTaskPool(std::make_unique<TaskPool>()) {}
 
     Dispatcher::~Dispatcher() {}
 
@@ -29,11 +29,9 @@ namespace vanilla::threads
         else
         {
             //CREATE NEW TASK AND STORE IT IN TASK POOL
-            //but where to store this task pool instance? in dispacher as unique pointer? 
-            //Task Task()
-            mTaskPool->enqueTask(Task(std::move(promise),id));
+            std::function<void(uint16_t, std::vector<uint8_t>&)> memberOfDataCache = std::bind(&DataCache::putData, mDataCache, std::placeholders::_1, std::placeholders::_2);
+            mTaskPool->enqueTask(Task(std::move(promise),id, memberOfDataCache));
         } 
         return future;
     }
-
 } // namespace vanilla::threads
