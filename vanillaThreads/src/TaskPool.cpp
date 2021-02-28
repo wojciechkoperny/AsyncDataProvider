@@ -6,14 +6,17 @@
 #include "TaskPool.hpp"
 #include "Database.hpp"
 
+#define NO_OF_THREADS 4
 
 namespace vanilla::threads
 {
     TaskPool::TaskPool() 
     {
-        std::cout << "task pool created!\n";
+        unsigned int n = std::thread::hardware_concurrency();
+        std::cout << n << " concurrent threads are supported.\n";
         mThreadsActive = 1;
-        for (uint8_t i = 0; i < 4; i++)
+        mThreadsState = 0;
+        for (uint8_t i = 0; i < NO_OF_THREADS; i++)
         {
             mWorkThreads.push_back(std::thread(&TaskPool::performThreadAction, this, i));   
             mWorkThreads[i].detach();
@@ -21,38 +24,44 @@ namespace vanilla::threads
     }
     TaskPool::~TaskPool() 
     {
+        using namespace std::chrono_literals;
         mThreadsActive = 0;
-        std::cout << "task pool destroyed!\n";
+        while(NO_OF_THREADS!=mThreadsState)
+        {
+             std::cout << "wait for threads to finish!\n";
+             std::this_thread::sleep_for(10ms);
+        }
+        std::cout << "task pool destroyed!\n";;
     }
 
     void TaskPool::enqueTask(Task t)
     {
-        //POSSIBLY BETTER TO CREATE HERE THREADS WHEN WE ADD NEW TASK 
-       mTasksQueue.push_back(std::move(t));
+        std::lock_guard<std::mutex> lckTask (mMutexTaskQueue);  
+        mTasksQueue.push_back(std::move(t));
     }
 
     void TaskPool::performThreadAction(uint8_t thrdNo)
     {
+        (void)thrdNo;
         Database database;
 
         while(mThreadsActive)
         {
-            std::unique_lock<std::mutex> lck (mMutexTaskQueue,std::defer_lock);  
-            if ((true == lck.try_lock()) && (!mTasksQueue.empty()))
+        std::unique_lock<std::mutex> lckTask (mMutexTaskQueue,std::defer_lock);  
+            if ((true == lckTask.try_lock()) && (!mTasksQueue.empty()))
             {
                 Task task = std::move(*mTasksQueue.begin());
                 mTasksQueue.erase(mTasksQueue.begin());
-                lck.unlock();
+                lckTask.unlock();
 
                 std::vector<uint8_t> acquiredData {database.getData(task.getId())};
-
-                std::cout << "\nthread: "<< static_cast<int>(thrdNo) << "\n";
-                (task.getPromise()).set_value(acquiredData);
                 //IS LOCK RESOURCE NEEDED HERE TO ADD TO CACHE?
                 task.mAddToCache(task.getId(),acquiredData);
+                (task.getPromise()).set_value(acquiredData);
             }
         }
-        std::cerr << "BYE thread: "<< static_cast<int>(thrdNo) <<"\n";
+        mThreadsState++;
+        //std::cerr << static_cast<int>(thrdNo) <<"\n";
     }
 
 

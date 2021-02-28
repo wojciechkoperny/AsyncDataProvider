@@ -9,77 +9,104 @@ int main()
 	try
 	{
 		vanilla::threads::DataInterface dataInterface{};
-
-		auto data = dataInterface.RequestDataById(2);
-
-		if (data.wait_for(2s) == std::future_status::ready)
-		{
-			//std::cout << "Received data for id:123\n";
-			auto dataVector = data.get();
-
-			std::cout << "vector: ";
-			for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
-			{
-    			std::cout << *i << ' ';
-			}
-			std::cout<<"\n";
-		}
-		else
-		{
-			std::cerr << "Error gettig data for id:123\n";
-		}
-
-		data = dataInterface.RequestDataById(5);
-		if (data.wait_for(2s) == std::future_status::ready)
-		{
-			auto dataVector = data.get();
-
-			std::cout << "vector: ";
-			for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
-			{
-    			std::cout << *i << ' ';
-			}
-			std::cout<<"\n";
-		}
 		
-		data = dataInterface.RequestDataById(9);
-		if (data.wait_for(2s) == std::future_status::ready)
+		std::vector<std::future<std::vector<uint8_t>>> vecFuture; 
+		//std::vector<std::vector<uint8_t>> dataVector;
+	for (uint8_t j = 0; j<2 ; j++)
+	{
+		vecFuture.erase(vecFuture.begin(),vecFuture.end());
+		for (uint16_t i=0; i<10; i++)
 		{
-			auto dataVector = data.get();
+			vecFuture.push_back(dataInterface.RequestDataById(i));
+		}
 
-			std::cout << "vector: ";
-			for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
+		for (uint16_t i=0; i<10; i++)
+		{
+			vecFuture[i].wait();
+		}
+
+		for (uint16_t i=0; i<10; i++)
+		{
+			auto dataVector = vecFuture[i].get();
+			for (auto ii = dataVector.begin(); ii != dataVector.end(); ++ii)
 			{
-    			std::cout << *i << ' ';
+    			std::cout << *ii /* << ' ' */;
 			}
 			std::cout<<"\n";
 		}
+	}
 		
-		data = dataInterface.RequestDataById(15);
-		if (data.wait_for(2s) == std::future_status::ready)
-		{
-			auto dataVector = data.get();
+		std::cout<<"koniec testu\n";
+		
 
-			std::cout << "vector: ";
-			for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
-			{
-    			std::cout << *i << ' ';
-			}
-			std::cout<<"\n";
-		}
+		// if (data.wait_for(2s) == std::future_status::ready)
+		// {
+		// 	//std::cout << "Received data for id:123\n";
+		// 	auto dataVector = data.get();
 
-		data = dataInterface.RequestDataById(5);
-		if (data.wait_for(2s) == std::future_status::ready)
-		{
-			auto dataVector = data.get();
+		// 	std::cout << "vector: ";
+		// 	for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
+		// 	{
+    	// 		std::cout << *i << ' ';
+		// 	}
+		// 	std::cout<<"\n";
+		// }
+		// else
+		// {
+		// 	std::cerr << "Error gettig data for id:123\n";
+		// }
 
-			std::cout << "vector: ";
-			for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
-			{
-    			std::cout << *i << ' ';
-			}
-			std::cout<<"\n";
-		}
+		// data = dataInterface.RequestDataById(5);
+		// if (data.wait_for(2s) == std::future_status::ready)
+		// {
+		// 	auto dataVector = data.get();
+
+		// 	std::cout << "vector: ";
+		// 	for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
+		// 	{
+    	// 		std::cout << *i << ' ';
+		// 	}
+		// 	std::cout<<"\n";
+		// }
+		
+		// data = dataInterface.RequestDataById(9);
+		// if (data.wait_for(2s) == std::future_status::ready)
+		// {
+		// 	auto dataVector = data.get();
+
+		// 	std::cout << "vector: ";
+		// 	for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
+		// 	{
+    	// 		std::cout << *i << ' ';
+		// 	}
+		// 	std::cout<<"\n";
+		// }
+		
+		// data = dataInterface.RequestDataById(15);
+		// if (data.wait_for(2s) == std::future_status::ready)
+		// {
+		// 	auto dataVector = data.get();
+
+		// 	std::cout << "vector: ";
+		// 	for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
+		// 	{
+    	// 		std::cout << *i << ' ';
+		// 	}
+		// 	std::cout<<"\n";
+		// }
+
+		// data = dataInterface.RequestDataById(5);
+		// if (data.wait_for(2s) == std::future_status::ready)
+		// {
+		// 	auto dataVector = data.get();
+
+		// 	std::cout << "vector: ";
+		// 	for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
+		// 	{
+    	// 		std::cout << *i << ' ';
+		// 	}
+		// 	std::cout<<"\n";
+		// }
 
 
 /* 		sleep(5); 

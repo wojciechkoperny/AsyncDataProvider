@@ -24,6 +24,7 @@ namespace vanilla::threads
         std::vector<Task> mTasksQueue;
         std::vector<std::thread> mWorkThreads; 
         std::atomic<bool> mThreadsActive;
+        std::atomic<uint8_t> mThreadsState;
         std::mutex mMutexTaskQueue;
     };
 
