@@ -1,0 +1,125 @@
+\documentclass[table]{article}
+
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{plantuml}
+
+\usepackage{minted}
+\newmintedfile[cppfile]{cpp}{frame=single,linenos,style=vs}
+
+% Margins
+\usepackage[top=2.5cm, left=3cm, right=3cm, bottom=4.0cm]{geometry}
+% Colour table cells
+
+% Get larger line spacing in table
+\newcommand{\tablespace}{\\[1.25mm]}
+\newcommand\Tstrut{\rule{0pt}{2.6ex}}         % = `top' strut
+\newcommand\tstrut{\rule{0pt}{2.0ex}}         % = `top' strut
+\newcommand\Bstrut{\rule[-0.9ex]{0pt}{0pt}}   % = `bottom' strut
+
+
+
+%
+%     Title
+%
+\title{Asynchronous Data Provider}
+\author{Wojciech Koperny, Sławomir Cielepak}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+
+
+%
+%   System overview
+%
+\section{System overview}
+
+The Asynchronous Data Provider system is a generic service that acts as a proxy to a simple key-value
+database. Each entry in the database is indexed with unique Id. The backend that will handle such storage
+is yet to be decided.
+
+A provider exposes a C++ interface that can be used by external applications directly in the code. It is
+provided as a shared or static library.
+
+The main goal of the system is to provide concurrent access to the data for multiple threads, thus
+maintaining the high responsiveness of the system.
+
+Each data request is cached in the system and in case of cache miss, a request is passed on a TaskPool
+queue. Tasks are consumed in parallel and provide results asynchronously directly to the client.
+
+It is assumed that retrieval of data from the database might be occupied with high resource usage and be
+time consuming.
+
+\subsection{System objects}
+
+The figure \ref{fig:system_overview} shows the main system objects.
+\begin{figure}[h]
+    \centering
+    \resizebox{.6\linewidth}{!}{\input{Figures/system_overview.tex}}
+    \caption{Asynchronous Data Provider system overview}
+    \label{fig:system_overview}
+\end{figure}
+
+
+\subsubsection{Dispatcher}
+
+A Dispatcher is an entity that provides boundary interface for the system receiving the Data Requests form
+the Client. For every request a \mintinline{cpp}{std::future<T>} object is returned.
+
+The Dispatcher first tries to get the requested data from Cache, if it's available, it sets the
+\mintinline{cpp}{std::promise<T>} immediately. In case the data is not available, Dispatcher creates a new
+Task and puts in on the TaskPool queue.
+
+\subsubsection{Data Cache}
+
+<description>
+
+\subsubsection{Task Pool}
+
+<description>
+
+\subsubsection{Database}
+
+<description>
+
+
+
+%
+% Use Cases
+%
+\pagebreak
+\section{Use cases}
+
+\subsubsection{Client requests data by ID}
+
+<description>
+
+\begin{figure}[ht]
+    \centering
+    \input{Figures/use_cases/client_requests_data.tex}
+    \caption{PlantUML diagram from file}
+    \label{fig:client_requests_data}
+\end{figure}
+
+
+
+
+%
+% Interfaces
+%
+\pagebreak
+\section{Interfaces}
+
+<description>
+
+\begin{listing}[ht]
+    \cppfile{Listings/hello_world.cpp}
+    \caption{Example source code from external file}
+    \label{lst:hello_world}
+\end{listing}
+
+\end{document}
