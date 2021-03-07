@@ -1,0 +1,65 @@
+\begin{plantuml}
+    @startuml
+
+    actor Client
+    participant "Data Interface" as di
+    participant "Data Cache" as data_cache
+    participant "Task Pool" as task_pool
+
+    Client -> di : RequestDataById(id: uint)
+    activate di
+
+    di -> di :: create promise
+
+    di -> data_cache : getData()
+    activate data_cache
+
+    data_cache -> data_cache : create optional<Data>
+
+    alt "cache hit"
+    data_cache -> data_cache : optional::emplace(data)
+    end
+
+    di <-- data_cache : optional<Data>
+    deactivate data_cache
+
+    alt "data available"
+    di -> di : promise::set_value(Data)
+    else
+    di -> Task ** : new Task(Promise)
+
+    di ->> task_pool : enqueue_task(Task)
+    activate task_pool
+    end
+
+    Client <-- di : return promise::get_future()
+    deactivate di
+    hnote over di : Idle
+
+    task_pool -> Task : startTask()
+    deactivate task_pool
+    activate Task
+
+    Task -> Database : getData()
+    activate Database
+    deactivate Database
+
+    Task -> Task : ComputeData()
+    Task -> Task : promise::set_value(Data)
+    activate Task
+    Task ->> Client : future::ready
+    deactivate Task
+
+    Task -> data_cache : putData(Data)
+    activate data_cache
+    deactivate data_cache
+    deactivate Task
+    destroy Task
+
+
+    Client -> Client : future::get_value()
+    activate Client
+    deactivate Client
+
+    @enduml
+\end{plantuml}

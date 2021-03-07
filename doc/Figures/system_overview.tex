@@ -1,0 +1,26 @@
+\begin{plantuml}
+    @startuml
+
+    interface "Data\nInterface" as DI
+    actor Client
+
+    package "Data Provider" {
+        [Dispatcher] -down- DI
+
+        [Data Cache] as DataCache
+        [Task Pool] as TaskPool
+        [Task]
+        [Database]
+
+        Dispatcher -left-> DataCache
+        Dispatcher -right-> TaskPool
+        Dispatcher -up-> Task
+        TaskPool -up-> Task
+        Task -right-> Database
+        Task -> DataCache
+    }
+
+    Client -right-(DI
+
+    @enduml
+\end{plantuml}
