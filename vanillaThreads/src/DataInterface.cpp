@@ -9,7 +9,17 @@ namespace vanilla::threads
 
     std::future<std::vector<uint8_t>> DataInterface::RequestDataById(const uint16_t id)
     {
-        return  mDispatcher->RequestDataById(id);
+        return mDispatcher->RequestDataById(id);
+    }
+
+    std::future<std::vector<uint8_t>> DataInterface::RequestDataById(const uint16_t id)
+    {
+        return mDispatcher->RequestDataById(id);
+    }
+
+    std::future<uint16_t> DataInterface::EmplaceData(const std::vector<uint8_t>)
+    {
+        //return mDispatcher->RequestDataById(id);
     }
 
 } // namespace vanilla::threads

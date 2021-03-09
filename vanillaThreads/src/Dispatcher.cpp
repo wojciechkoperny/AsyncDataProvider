@@ -34,4 +34,9 @@ namespace vanilla::threads
         } 
         return future;
     }
+
+    std::future<uint16_t> EmplaceData(const std::vector<uint8_t>)
+    {
+        
+    }
 } // namespace vanilla::threads
