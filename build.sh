@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-OUT_DIR=build
+OUT_DIR=out
 BUILD_TYPE=Release
 
 mkdir -p $OUT_DIR 
@@ -17,6 +17,6 @@ else
 fi
 
 cd $OUT_DIR
-cmake -G "Ninja" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
-ninja -j $(nproc)
+cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+make all -j $(nproc)
 

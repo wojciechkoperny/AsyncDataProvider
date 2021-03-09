@@ -9,7 +9,6 @@ namespace vanilla::threads
 {
     /// Forward declaration of Dispatcher
     class Dispatcher;
-
     class DataInterface
     {
     public:
