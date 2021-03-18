@@ -8,7 +8,7 @@
 
 namespace vanilla::threads
 {
-    Dispatcher::Dispatcher(): mDataCache(std::make_shared<DataCache>()), mTaskPool(std::make_unique<TaskPool>()) {}
+    Dispatcher::Dispatcher() : mDataCache(std::make_shared<DataCache>()), mTaskPool(std::make_unique<TaskPool>()) {}
 
     Dispatcher::~Dispatcher() {}
 
@@ -19,24 +19,32 @@ namespace vanilla::threads
         if (id > 123u)
         {
             promise.set_exception(std::make_exception_ptr(std::runtime_error{"Invalid id, must be <= 123"}));
-        } 
+        }
 
-        std::optional<std::vector<uint8_t>> m_valueCached (mDataCache->getData(id));
-        if (m_valueCached) 
+        std::optional<std::vector<uint8_t>> m_valueCached(mDataCache->getData(id));
+        if (m_valueCached)
         {
             promise.set_value(m_valueCached.value());
         }
         else
         {
             //CREATE NEW TASK AND STORE IT IN TASK POOL
-            std::function<void(uint16_t, std::vector<uint8_t>&)> memberOfDataCache = std::bind(&DataCache::putData, mDataCache, std::placeholders::_1, std::placeholders::_2);
-            mTaskPool->enqueTask(Task(std::move(promise),id, memberOfDataCache));
-        } 
+            std::function<void(uint16_t, std::vector<uint8_t> &)> memberOfDataCache = std::bind(&DataCache::putData, mDataCache, std::placeholders::_1, std::placeholders::_2);
+            mTaskPool->enqueGetTask(TaskGetData(std::move(promise), id, memberOfDataCache));
+        }
         return future;
     }
 
-    std::future<uint16_t> EmplaceData(const std::vector<uint8_t>)
+    std::future<uint16_t> Dispatcher::EmplaceData(const std::vector<uint8_t> v)
     {
-        
+        //(void)v;
+        std::promise<uint16_t> promise;
+        std::future<uint16_t> future = promise.get_future();
+        std::function<void(uint16_t, std::vector<uint8_t> &)> memberOfDataCache = std::bind(&DataCache::putData, mDataCache, std::placeholders::_1, std::placeholders::_2);
+        mTaskPool->enquePutTask(TaskPutData(std::move(promise), v, memberOfDataCache));
+        //CREATE NEW TASK AND STORE IT IN TASK POOL
+        //std::function<void(uint16_t, std::vector<uint8_t> &)> memberOfDataCache = std::bind(&DataCache::putData, mDataCache, std::placeholders::_1, std::placeholders::_2);
+        //mTaskPool->enqueTask(Task(std::move(promise), id, memberOfDataCache));
+        return future;
     }
 } // namespace vanilla::threads

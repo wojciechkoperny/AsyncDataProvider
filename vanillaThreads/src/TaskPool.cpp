@@ -10,59 +10,99 @@
 
 namespace vanilla::threads
 {
-    TaskPool::TaskPool() 
+    TaskPool::TaskPool()
     {
         unsigned int n = std::thread::hardware_concurrency();
         std::cout << n << " concurrent threads are supported.\n";
-        mThreadsActive = 1;
-        mThreadsState = 0;
-        for (uint8_t i = 0; i < NO_OF_THREADS; i++)
-        {
-            mWorkThreads.push_back(std::thread(&TaskPool::performThreadAction, this, i));   
-            mWorkThreads[i].detach();
-        }
+        mThreadsNo = 0;
     }
-    TaskPool::~TaskPool() 
+    TaskPool::~TaskPool()
     {
-        using namespace std::chrono_literals;
-        mThreadsActive = 0;
-        while(NO_OF_THREADS!=mThreadsState)
-        {
-             std::cout << "wait for threads to finish!\n";
-             std::this_thread::sleep_for(10ms);
-        }
-        std::cout << "task pool destroyed!\n";;
+        std::cout << "task pool destroyed!\n";
     }
 
-    void TaskPool::enqueTask(Task t)
+    void TaskPool::enqueGetTask(TaskGetData t)
     {
-        std::lock_guard<std::mutex> lckTask (mMutexTaskQueue);  
-        mTasksQueue.push_back(std::move(t));
+        std::lock_guard<std::mutex> lckTask(mMutexTaskQueue);
+        mTasksGetQueue.push_back(std::move(t));
+        mAllTasksQueue.push_back(TypeGetData);
+        addThread();
     }
 
-    void TaskPool::performThreadAction(uint8_t thrdNo)
+    void TaskPool::enquePutTask(TaskPutData t)
     {
-        (void)thrdNo;
+        std::lock_guard<std::mutex> lckTask(mMutexTaskQueue);
+        mTasksPutQueue.push_back(std::move(t));
+        mAllTasksQueue.push_back(TypePutData);
+        addThread();
+    }
+
+    void TaskPool::addThread()
+    {
+        if (mThreadsNo < NO_OF_THREADS) //std::thread::hardware_concurrency())
+        {
+            mWorkThreads.push_back(std::thread(&TaskPool::performThreadAction, this));
+            mWorkThreads[mThreadsNo].detach();
+            mThreadsNo++;
+        }
+        std::cout << mThreadsNo << ": Numver of thread\n";
+    }
+
+    void TaskPool::removeTaskFromQueue(TaskType_t t)
+    {
+        if (TypeGetData == t)
+        {
+            mAllTasksQueue.erase(mAllTasksQueue.begin());
+            mTasksGetQueue.erase(mTasksGetQueue.begin());
+        }
+        else
+        {
+            mAllTasksQueue.erase(mAllTasksQueue.begin());
+            mTasksPutQueue.erase(mTasksPutQueue.begin());
+        }
+        std::cout << mThreadsNo << ": Number of thread after remove\n";
+    }
+
+    void TaskPool::performThreadAction()
+    {
+        //(void)thrdNo;
         Database database;
 
-        while(mThreadsActive)
-        {
-        std::unique_lock<std::mutex> lckTask (mMutexTaskQueue,std::defer_lock);  
-            if ((true == lckTask.try_lock()) && (!mTasksQueue.empty()))
-            {
-                Task task = std::move(*mTasksQueue.begin());
-                mTasksQueue.erase(mTasksQueue.begin());
-                lckTask.unlock();
+        // while (!mTasksQueue.empty())
+        // {
+        //     std::unique_lock<std::mutex> lckTask(mMutexTaskQueue, std::defer_lock);
+        //     lckTask.lock();
 
-                std::vector<uint8_t> acquiredData {database.getData(task.getId())};
-                //IS LOCK RESOURCE NEEDED HERE TO ADD TO CACHE?
-                task.mAddToCache(task.getId(),acquiredData);
-                (task.getPromise()).set_value(acquiredData);
+        while (!mAllTasksQueue.empty())
+        {
+            std::unique_lock<std::mutex> lckTask(mMutexTaskQueue, std::try_to_lock);
+            if (lckTask.owns_lock())
+            {
+                switch (mAllTasksQueue.front())
+                //switch ((*mTasksQueue.begin())->getType())
+                {
+                case TypeGetData:
+                {
+                    TaskGetData task = std::move(*mTasksGetQueue.begin());
+                    removeTaskFromQueue(TypeGetData);
+                    lckTask.unlock();
+
+                    std::vector<uint8_t> acquiredData{database.getData(task.getId())};
+                    task.mAddToCache(task.getId(), acquiredData);
+                    task.getPromise().set_value(acquiredData);
+                    break;
+                }
+                case TypePutData:
+                    std::cerr << " Task has put work\n";
+                    break;
+                default:
+                    std::cerr << " Task has default work\n";
+                    break;
+                }
             }
         }
-        mThreadsState++;
+        std::cout << mThreadsNo << ": Number of thread after end\n";
+        mThreadsNo--;
         //std::cerr << static_cast<int>(thrdNo) <<"\n";
     }
-
-
 }

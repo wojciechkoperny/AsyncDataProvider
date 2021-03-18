@@ -17,14 +17,19 @@ namespace vanilla::threads
         TaskPool();
         virtual ~TaskPool();
 
-        void enqueTask(Task t);
-        void performThreadAction(uint8_t i);
+        void enqueGetTask(TaskGetData t);
+        void enquePutTask(TaskPutData t);
+
+        void performThreadAction();
 
     private:
-        std::vector<Task> mTasksQueue;
-        std::vector<std::thread> mWorkThreads; 
-        std::atomic<bool> mThreadsActive;
-        std::atomic<uint8_t> mThreadsState;
+        void removeTaskFromQueue(TaskType_t t);
+        void addThread();
+        std::vector<TaskType_t> mAllTasksQueue;
+        std::vector<TaskGetData> mTasksGetQueue;
+        std::vector<TaskPutData> mTasksPutQueue;
+        std::vector<std::thread> mWorkThreads;
+        std::atomic<uint32_t> mThreadsNo;
         std::mutex mMutexTaskQueue;
     };
 

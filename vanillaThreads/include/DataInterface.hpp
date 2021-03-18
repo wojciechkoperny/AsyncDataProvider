@@ -16,7 +16,7 @@ namespace vanilla::threads
         virtual ~DataInterface();
 
         std::future<std::vector<uint8_t>> RequestDataById(const uint16_t id);
-        std::future<uint16_t> EmplaceData(const std::vector<uint8_t>);
+        std::future<uint16_t> EmplaceData(const std::vector<uint8_t> v);
 
     private:
         std::unique_ptr<Dispatcher> mDispatcher;

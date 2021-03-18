@@ -12,14 +12,11 @@ namespace vanilla::threads
         return mDispatcher->RequestDataById(id);
     }
 
-    std::future<std::vector<uint8_t>> DataInterface::RequestDataById(const uint16_t id)
+    std::future<uint16_t> DataInterface::EmplaceData(const std::vector<uint8_t> v)
     {
-        return mDispatcher->RequestDataById(id);
-    }
-
-    std::future<uint16_t> DataInterface::EmplaceData(const std::vector<uint8_t>)
-    {
-        //return mDispatcher->RequestDataById(id);
+        // (void)v;
+        // return mDispatcher->RequestDataById(5);
+        return mDispatcher->EmplaceData(v);
     }
 
 } // namespace vanilla::threads

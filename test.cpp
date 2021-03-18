@@ -9,35 +9,42 @@ int main()
 	try
 	{
 		vanilla::threads::DataInterface dataInterface{};
-		
-		std::vector<std::future<std::vector<uint8_t>>> vecFuture; 
+
+		std::vector<std::future<std::vector<uint8_t>>> vecFuture;
 		//std::vector<std::vector<uint8_t>> dataVector;
-	for (uint8_t j = 0; j<2 ; j++)
-	{
-		vecFuture.erase(vecFuture.begin(),vecFuture.end());
-		for (uint16_t i=0; i<10; i++)
+		for (uint8_t j = 0; j < 2; j++)
 		{
-			vecFuture.push_back(dataInterface.RequestDataById(i));
-		}
-
-		for (uint16_t i=0; i<10; i++)
-		{
-			vecFuture[i].wait();
-		}
-
-		for (uint16_t i=0; i<10; i++)
-		{
-			auto dataVector = vecFuture[i].get();
-			for (auto ii = dataVector.begin(); ii != dataVector.end(); ++ii)
+			vecFuture.erase(vecFuture.begin(), vecFuture.end());
+			for (uint16_t i = 0; i < 10; i++)
 			{
-    			std::cout << *ii /* << ' ' */;
+				vecFuture.push_back(dataInterface.RequestDataById(i));
 			}
-			std::cout<<"\n";
+
+			for (uint16_t i = 0; i < 10; i++)
+			{
+				vecFuture[i].wait();
+			}
+
+			for (uint16_t i = 0; i < 10; i++)
+			{
+				auto dataVector = vecFuture[i].get();
+				for (auto ii = dataVector.begin(); ii != dataVector.end(); ++ii)
+				{
+					std::cout << *ii /* << ' ' */;
+				}
+				std::cout << "\n";
+			}
 		}
-	}
-		
-		std::cout<<"koniec testu\n";
-		
+
+		std::vector<uint8_t> PutVector;
+		PutVector.push_back('d');
+		PutVector.push_back('u');
+		PutVector.push_back('p');
+		PutVector.push_back('a');
+
+		//dataInterface.EmplaceData(PutVector);
+
+		std::cout << "koniec testu\n";
 
 		// if (data.wait_for(2s) == std::future_status::ready)
 		// {
@@ -47,7 +54,7 @@ int main()
 		// 	std::cout << "vector: ";
 		// 	for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
 		// 	{
-    	// 		std::cout << *i << ' ';
+		// 		std::cout << *i << ' ';
 		// 	}
 		// 	std::cout<<"\n";
 		// }
@@ -64,11 +71,11 @@ int main()
 		// 	std::cout << "vector: ";
 		// 	for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
 		// 	{
-    	// 		std::cout << *i << ' ';
+		// 		std::cout << *i << ' ';
 		// 	}
 		// 	std::cout<<"\n";
 		// }
-		
+
 		// data = dataInterface.RequestDataById(9);
 		// if (data.wait_for(2s) == std::future_status::ready)
 		// {
@@ -77,11 +84,11 @@ int main()
 		// 	std::cout << "vector: ";
 		// 	for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
 		// 	{
-    	// 		std::cout << *i << ' ';
+		// 		std::cout << *i << ' ';
 		// 	}
 		// 	std::cout<<"\n";
 		// }
-		
+
 		// data = dataInterface.RequestDataById(15);
 		// if (data.wait_for(2s) == std::future_status::ready)
 		// {
@@ -90,7 +97,7 @@ int main()
 		// 	std::cout << "vector: ";
 		// 	for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
 		// 	{
-    	// 		std::cout << *i << ' ';
+		// 		std::cout << *i << ' ';
 		// 	}
 		// 	std::cout<<"\n";
 		// }
@@ -103,13 +110,12 @@ int main()
 		// 	std::cout << "vector: ";
 		// 	for (auto i = dataVector.begin(); i != dataVector.end(); ++i)
 		// 	{
-    	// 		std::cout << *i << ' ';
+		// 		std::cout << *i << ' ';
 		// 	}
 		// 	std::cout<<"\n";
 		// }
 
-
-/* 		sleep(5); 
+		/* 		sleep(5); 
 		std::cout << "koniec czekania\n"; */
 	}
 	catch (const std::exception &e)
