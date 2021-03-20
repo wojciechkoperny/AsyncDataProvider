@@ -55,7 +55,7 @@ namespace vanilla::threads
         return mId;
     }
 
-    TaskPutData::TaskPutData(std::promise<uint16_t> promise, std::vector<uint8_t> v, std::function<void(uint16_t, std::vector<uint8_t> &)> pf)
+    TaskPutData::TaskPutData(std::promise<uint16_t> promise, std::vector<uint8_t> v, std::function<void(uint16_t, std::vector<uint8_t>)> pf)
     {
         mPromise = std::move(promise);
         mVector = v;
@@ -85,6 +85,13 @@ namespace vanilla::threads
         return *this;
     }
 
-    std::promise<std::vector<uint8_t>> getPromise();
-    uint16_t getVector();
+    std::promise<uint16_t> TaskPutData::getPromise()
+    {
+        return std::move(mPromise);
+    }
+
+    std::vector<uint8_t> TaskPutData::getVector()
+    {
+        return mVector;
+    }
 }

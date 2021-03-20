@@ -14,10 +14,11 @@ namespace vanilla::threads
         Database();
         virtual ~Database();
         std::vector<uint8_t> getData(const uint16_t id);
-    
+        uint16_t putData(std::vector<uint8_t> v);
+
     private:
-         std::map<uint16_t, std::vector<uint8_t>> mDataMap;
-    };
+        std::map<uint16_t, std::vector<uint8_t>> mDataMap;
+        };
 
 } // namespace vanilla::threads
 

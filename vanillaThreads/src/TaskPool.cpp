@@ -93,8 +93,17 @@ namespace vanilla::threads
                     break;
                 }
                 case TypePutData:
-                    std::cerr << " Task has put work\n";
+                {
+                    TaskPutData task = std::move(*mTasksPutQueue.begin());
+                    removeTaskFromQueue(TypePutData);
+                    lckTask.unlock();
+
+                    uint16_t acquiredId{database.putData(task.getVector())};
+                    task.mAddToCache(acquiredId, task.getVector());
+                    //task.mAddToCache(task.getVector(), acquiredId);
+                    task.getPromise().set_value(acquiredId);
                     break;
+                }
                 default:
                     std::cerr << " Task has default work\n";
                     break;

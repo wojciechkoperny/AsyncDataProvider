@@ -53,15 +53,15 @@ namespace vanilla::threads
         TaskPutData(TaskPutData &&t) noexcept;
         TaskPutData &operator=(TaskPutData &&t) noexcept;
 
-        std::promise<std::vector<uint8_t>> getPromise();
-        uint16_t getVector();
+        std::promise<uint16_t> getPromise();
+        std::vector<uint8_t> getVector();
 
     private:
         std::promise<uint16_t> mPromise;
         std::vector<uint8_t> mVector;
 
     public:
-        std::function<void(uint16_t, std::vector<uint8_t> &)> mAddToCache;
+        std::function<void(uint16_t, std::vector<uint8_t>)> mAddToCache;
     };
 
 }

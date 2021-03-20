@@ -41,8 +41,9 @@ int main()
 		PutVector.push_back('u');
 		PutVector.push_back('p');
 		PutVector.push_back('a');
-
-		//dataInterface.EmplaceData(PutVector);
+		std::future<uint16_t> putFuture;
+		putFuture = dataInterface.EmplaceData(PutVector);
+		putFuture.wait();
 
 		std::cout << "koniec testu\n";
 
