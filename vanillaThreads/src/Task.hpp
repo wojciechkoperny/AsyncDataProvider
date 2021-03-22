@@ -29,7 +29,7 @@ namespace vanilla::threads
     class TaskGetData : public Task
     {
     public:
-        TaskGetData(std::promise<std::vector<uint8_t>> promise, uint16_t id, std::function<void(uint16_t, std::vector<uint8_t> &)> pf);
+        TaskGetData(std::promise<std::vector<uint8_t>> promise, uint16_t id, std::function<void(uint16_t, std::vector<uint8_t>)> pf);
         virtual ~TaskGetData();
         TaskGetData(TaskGetData &&t) noexcept;
         TaskGetData &operator=(TaskGetData &&t) noexcept;
@@ -48,7 +48,7 @@ namespace vanilla::threads
     class TaskPutData : public Task
     {
     public:
-        TaskPutData(std::promise<uint16_t> promise, std::vector<uint8_t> v, std::function<void(uint16_t, std::vector<uint8_t> &)> pf);
+        TaskPutData(std::promise<uint16_t> promise, std::vector<uint8_t> v, std::function<void(uint16_t, std::vector<uint8_t>)> pf);
         virtual ~TaskPutData();
         TaskPutData(TaskPutData &&t) noexcept;
         TaskPutData &operator=(TaskPutData &&t) noexcept;

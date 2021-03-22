@@ -15,7 +15,7 @@ namespace vanilla::threads
         return mTaskType;
     }
 
-    TaskGetData::TaskGetData(std::promise<std::vector<uint8_t>> promise, uint16_t id, std::function<void(uint16_t, std::vector<uint8_t> &)> pf)
+    TaskGetData::TaskGetData(std::promise<std::vector<uint8_t>> promise, uint16_t id, std::function<void(uint16_t, std::vector<uint8_t>)> pf)
     {
         mPromise = std::move(promise);
         mId = id;
@@ -64,13 +64,34 @@ namespace vanilla::threads
     }
     TaskPutData::~TaskPutData() {}
 
+    // TaskGetData::TaskGetData(TaskGetData &&t) noexcept
+    // {
+    //     mId = t.mId;
+    //     mPromise = std::move(t.mPromise);
+    //     mAddToCache = t.mAddToCache;
+    //     mTaskType = TypeGetData;
+    // }
     TaskPutData::TaskPutData(TaskPutData &&t) noexcept
     {
-        mVector = t.mVector;
+        //        mVector = t.mVector;
+        //mVector = std::move(t.mVector);
         mPromise = std::move(t.mPromise);
         mAddToCache = t.mAddToCache;
         mTaskType = TypePutData;
     }
+    // TaskGetData &TaskGetData::operator=(TaskGetData &&t) noexcept
+    // {
+    //     // Self-assignment detection
+    //     if (&t == this)
+    //     {
+    //         return *this;
+    //     }
+    //     mId = t.mId;
+    //     mPromise = std::move(t.mPromise);
+    //     mAddToCache = t.mAddToCache;
+    //     mTaskType = TypeGetData;
+    //     return *this;
+    // }
     TaskPutData &TaskPutData::operator=(TaskPutData &&t) noexcept
     {
         // Self-assignment detection
@@ -78,7 +99,8 @@ namespace vanilla::threads
         {
             return *this;
         }
-        mVector = t.mVector;
+        //mVector = t.mVector;
+        //mVector = std::move(t.mVector);
         mPromise = std::move(t.mPromise);
         mAddToCache = t.mAddToCache;
         mTaskType = TypePutData;

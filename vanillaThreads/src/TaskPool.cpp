@@ -15,10 +15,20 @@ namespace vanilla::threads
         unsigned int n = std::thread::hardware_concurrency();
         std::cout << n << " concurrent threads are supported.\n";
         mThreadsNo = 0;
+        mThreadsClose = 0;
+
+        while (mThreadsNo < NO_OF_THREADS) //std::thread::hardware_concurrency())
+        {
+            mWorkThreads.push_back(std::thread(&TaskPool::performThreadAction, this));
+            mWorkThreads[mThreadsNo].detach();
+            mThreadsNo++;
+        }
     }
     TaskPool::~TaskPool()
     {
         std::cout << "task pool destroyed!\n";
+        mThreadsClose = 1;
+        sleep(1);
     }
 
     void TaskPool::enqueGetTask(TaskGetData t)
@@ -39,13 +49,13 @@ namespace vanilla::threads
 
     void TaskPool::addThread()
     {
-        if (mThreadsNo < NO_OF_THREADS) //std::thread::hardware_concurrency())
-        {
-            mWorkThreads.push_back(std::thread(&TaskPool::performThreadAction, this));
-            mWorkThreads[mThreadsNo].detach();
-            mThreadsNo++;
-        }
-        std::cout << mThreadsNo << ": Numver of thread\n";
+        // if (mThreadsNo < NO_OF_THREADS) //std::thread::hardware_concurrency())
+        // {
+        //     mWorkThreads.push_back(std::thread(&TaskPool::performThreadAction, this));
+        //     mWorkThreads[mThreadsNo].detach();
+        //     mThreadsNo++;
+        // }
+        // std::cout << mThreadsNo << ": Numver of thread\n";
     }
 
     void TaskPool::removeTaskFromQueue(TaskType_t t)
@@ -72,12 +82,13 @@ namespace vanilla::threads
         // {
         //     std::unique_lock<std::mutex> lckTask(mMutexTaskQueue, std::defer_lock);
         //     lckTask.lock();
-
-        while (!mAllTasksQueue.empty())
+        while (!mThreadsClose)
+        // while (!mAllTasksQueue.empty())
         {
             std::unique_lock<std::mutex> lckTask(mMutexTaskQueue, std::try_to_lock);
-            if (lckTask.owns_lock())
+            if (lckTask.owns_lock() && !mAllTasksQueue.empty())
             {
+                std::cout << "mamy locka \n";
                 switch (mAllTasksQueue.front())
                 //switch ((*mTasksQueue.begin())->getType())
                 {
@@ -94,19 +105,28 @@ namespace vanilla::threads
                 }
                 case TypePutData:
                 {
-                    TaskPutData task = std::move(*mTasksPutQueue.begin());
+                    // std::promise<uint16_t> promise;
+                    // std::future<uint16_t> future = promise.get_future();
+                    // std::function<void(uint16_t, std::vector<uint8_t>)> memberOfDataCache = std::bind(&DataCache::putData, mDataCache, std::placeholders::_1, std::placeholders::_2);
+                    // TaskPutData(std::move(promise), v, memberOfDataCache));
+                    // TaskPutData taskPut {};
+                    TaskPutData taskPut = std::move(mTasksPutQueue.front());
+
+                    //TaskPutData taskPut = std::move(*mTasksPutQueue.begin());
                     removeTaskFromQueue(TypePutData);
                     lckTask.unlock();
 
-                    uint16_t acquiredId{database.putData(task.getVector())};
-                    task.mAddToCache(acquiredId, task.getVector());
+                    uint16_t acquiredId{database.putData(taskPut.getVector())};
+                    taskPut.mAddToCache(acquiredId, taskPut.getVector());
                     //task.mAddToCache(task.getVector(), acquiredId);
-                    task.getPromise().set_value(acquiredId);
+                    taskPut.getPromise().set_value(acquiredId);
                     break;
                 }
                 default:
+                {
                     std::cerr << " Task has default work\n";
                     break;
+                }
                 }
             }
         }

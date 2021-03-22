@@ -2,30 +2,35 @@
 
 #include <iostream>
 #include <unistd.h>
+
+#define AMOUNT_OF_PASSES 2U
+#define READ_SIGNALS 10U
 using namespace std::chrono_literals;
+
+vanilla::threads::DataInterface dataInterface{};
 
 int main()
 {
 	try
 	{
-		vanilla::threads::DataInterface dataInterface{};
 
 		std::vector<std::future<std::vector<uint8_t>>> vecFuture;
 		//std::vector<std::vector<uint8_t>> dataVector;
-		for (uint8_t j = 0; j < 2; j++)
+
+		for (uint8_t j = 0; j < AMOUNT_OF_PASSES; j++)
 		{
 			vecFuture.erase(vecFuture.begin(), vecFuture.end());
-			for (uint16_t i = 0; i < 10; i++)
+			for (uint16_t i = 0; i < READ_SIGNALS; i++)
 			{
 				vecFuture.push_back(dataInterface.RequestDataById(i));
 			}
 
-			for (uint16_t i = 0; i < 10; i++)
+			for (uint16_t i = 0; i < READ_SIGNALS; i++)
 			{
 				vecFuture[i].wait();
 			}
 
-			for (uint16_t i = 0; i < 10; i++)
+			for (uint16_t i = 0; i < READ_SIGNALS; i++)
 			{
 				auto dataVector = vecFuture[i].get();
 				for (auto ii = dataVector.begin(); ii != dataVector.end(); ++ii)
@@ -36,6 +41,7 @@ int main()
 			}
 		}
 
+		std::cout << "add testu\n";
 		std::vector<uint8_t> PutVector;
 		PutVector.push_back('d');
 		PutVector.push_back('u');
@@ -44,6 +50,16 @@ int main()
 		std::future<uint16_t> putFuture;
 		putFuture = dataInterface.EmplaceData(PutVector);
 		putFuture.wait();
+		uint16_t redeivedData{putFuture.get()};
+		std::cout << "id :" << redeivedData << "\n";
+
+		// auto data{dataInterface.RequestDataById(4)};
+		// data.wait();
+		// auto dataVector = data.get();
+		// for (auto ii = dataVector.begin(); ii != dataVector.end(); ++ii)
+		// {
+		// 	std::cout << *ii /* << ' ' */;
+		// }
 
 		std::cout << "koniec testu\n";
 

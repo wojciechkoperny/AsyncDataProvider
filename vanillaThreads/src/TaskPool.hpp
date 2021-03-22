@@ -30,6 +30,7 @@ namespace vanilla::threads
         std::vector<TaskPutData> mTasksPutQueue;
         std::vector<std::thread> mWorkThreads;
         std::atomic<uint32_t> mThreadsNo;
+        std::atomic<uint32_t> mThreadsClose;
         std::mutex mMutexTaskQueue;
     };
 

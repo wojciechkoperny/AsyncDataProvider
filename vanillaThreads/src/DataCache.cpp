@@ -4,7 +4,7 @@
 
 namespace vanilla::threads
 {
-    DataCache::DataCache():mMapCached{ {0,{'q'}}, {1,{'w','a','r'}}, {2,{'n','e','v','e','r'}}, {3,{'c','h','a','n','g','e','s'}} } {}  //just for testing
+    DataCache::DataCache() : mMapCached{{0, {'q'}}, {1, {'w', 'a', 'r'}}, {2, {'n', 'e', 'v', 'e', 'r'}}, {3, {'c', 'h', 'a', 'n', 'g', 'e', 's'}}} {} //just for testing
     DataCache::~DataCache() {}
 
     std::optional<std::vector<uint8_t>> DataCache::getData(uint16_t id)
@@ -22,7 +22,7 @@ namespace vanilla::threads
         }
     }
 
-    void DataCache::putData(uint16_t id, std::vector<uint8_t> &Data)
+    void DataCache::putData(uint16_t id, std::vector<uint8_t> Data)
     {
         std::cout << "Add to Cache!\n";
         mMapCached.try_emplace(id, Data);
