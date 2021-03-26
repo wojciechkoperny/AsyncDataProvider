@@ -17,12 +17,13 @@ namespace vanilla::threads
         mThreadsNo = 0;
         mThreadsClose = 0;
 
-        while (mThreadsNo < NO_OF_THREADS) //std::thread::hardware_concurrency())
-        {
-            mWorkThreads.push_back(std::thread(&TaskPool::performThreadAction, this));
-            mWorkThreads[mThreadsNo].detach();
-            mThreadsNo++;
-        }
+        // while (mThreadsNo < NO_OF_THREADS) //std::thread::hardware_concurrency())
+        // {
+        //     mWorkThreads.push_back(std::thread(&TaskPool::performThreadAction, this));
+        //     std::cout << "id threada : " << mWorkThreads[mThreadsNo].get_id();
+        //     mWorkThreads[mThreadsNo].detach();
+        //     mThreadsNo++;
+        // }
     }
     TaskPool::~TaskPool()
     {
@@ -49,13 +50,13 @@ namespace vanilla::threads
 
     void TaskPool::addThread()
     {
-        // if (mThreadsNo < NO_OF_THREADS) //std::thread::hardware_concurrency())
-        // {
-        //     mWorkThreads.push_back(std::thread(&TaskPool::performThreadAction, this));
-        //     mWorkThreads[mThreadsNo].detach();
-        //     mThreadsNo++;
-        // }
-        // std::cout << mThreadsNo << ": Numver of thread\n";
+        if (mThreadsNo < NO_OF_THREADS) //std::thread::hardware_concurrency())
+        {
+            mWorkThreads.push_back(std::thread(&TaskPool::performThreadAction, this));
+            mWorkThreads[mThreadsNo].detach();
+            mThreadsNo++;
+        }
+        std::cout << mThreadsNo << ": Numver of thread\n";
     }
 
     void TaskPool::removeTaskFromQueue(TaskType_t t)
@@ -85,6 +86,7 @@ namespace vanilla::threads
         while (!mThreadsClose)
         // while (!mAllTasksQueue.empty())
         {
+            //std::unique_lock<std::mutex> lckTask(mMutexTaskQueue);
             std::unique_lock<std::mutex> lckTask(mMutexTaskQueue, std::try_to_lock);
             if (lckTask.owns_lock() && !mAllTasksQueue.empty())
             {
