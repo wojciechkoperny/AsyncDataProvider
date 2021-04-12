@@ -74,7 +74,7 @@ namespace vanilla::threads
     TaskPutData::TaskPutData(TaskPutData &&t) noexcept
     {
         //        mVector = t.mVector;
-        //mVector = std::move(t.mVector);
+        mVector = std::move(t.mVector);
         mPromise = std::move(t.mPromise);
         mAddToCache = t.mAddToCache;
         mTaskType = TypePutData;
@@ -100,7 +100,7 @@ namespace vanilla::threads
             return *this;
         }
         //mVector = t.mVector;
-        //mVector = std::move(t.mVector);
+        mVector = std::move(t.mVector);
         mPromise = std::move(t.mPromise);
         mAddToCache = t.mAddToCache;
         mTaskType = TypePutData;

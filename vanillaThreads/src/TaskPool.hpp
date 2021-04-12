@@ -17,8 +17,8 @@ namespace vanilla::threads
         TaskPool();
         virtual ~TaskPool();
 
-        void enqueGetTask(TaskGetData t);
-        void enquePutTask(TaskPutData t);
+        void enqueGetTask(TaskGetData &&t);
+        void enquePutTask(TaskPutData &&t);
 
         void performThreadAction();
 

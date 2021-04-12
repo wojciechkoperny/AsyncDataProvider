@@ -1,5 +1,6 @@
 #include "Database.hpp"
 #include <unistd.h>
+#include <sqlite3.h>
 
 namespace vanilla::threads
 {

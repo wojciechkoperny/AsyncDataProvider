@@ -16,7 +16,7 @@ namespace vanilla::threads
         Dispatcher();
         virtual ~Dispatcher();
         std::future<std::vector<uint8_t>> RequestDataById(const uint16_t id);
-        std::future<uint16_t> EmplaceData(const std::vector<uint8_t> v);
+        std::future<uint16_t> EmplaceData(const std::vector<uint8_t> &v);
 
     private:
         std::shared_ptr<DataCache> mDataCache;

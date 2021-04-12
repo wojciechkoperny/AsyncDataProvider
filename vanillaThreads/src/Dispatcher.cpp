@@ -35,7 +35,7 @@ namespace vanilla::threads
         return future;
     }
 
-    std::future<uint16_t> Dispatcher::EmplaceData(const std::vector<uint8_t> v)
+    std::future<uint16_t> Dispatcher::EmplaceData(const std::vector<uint8_t> &v)
     {
         //(void)v;
         std::promise<uint16_t> promise;

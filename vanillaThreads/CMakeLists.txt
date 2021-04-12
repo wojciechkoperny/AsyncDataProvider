@@ -17,6 +17,7 @@ target_include_directories(vanillaThreads
 target_link_libraries(vanillaThreads
     PUBLIC
         -Wl,--no-as-needed -lpthread -Wl,--as-needed # Because gcc is dumb and cannot figure out that promise/future requires pthread..
+        sqlite3
         code_coverage
         compiler_warnings
 )
